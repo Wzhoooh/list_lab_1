@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1583694435 source:c:\users\alex\desktop\vuz\prog\2й семестр\list_with_ring\list.c
+	"list.h"
+	<stdlib.h>
+	<stdio.h>
+
+1583693124 c:\users\alex\desktop\vuz\prog\2й семестр\list_with_ring\list.h
+	<stdlib.h>
+
+1583694264 source:c:\users\alex\desktop\vuz\prog\2й семестр\list_with_ring\main.c
+	<stdio.h>
+	<stdlib.h>
+	"list.h"
+
