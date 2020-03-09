@@ -23,7 +23,7 @@ struct Node* insertAfterIndex(struct List* list, int index, int value)
 
     if (index == list->size-1)
     {
-        newNode = insertLast(list, value);
+        newNode = insertBack(list, value);
         return newNode;
     }
 
@@ -46,7 +46,7 @@ struct Node* insertAfterIndex(struct List* list, int index, int value)
     return newNode;
 }
 
-struct Node* insertFirst(struct List* list, int value)
+struct Node* insertFront(struct List* list, int value)
 {
     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node) * 1);
     if (newNode == NULL)
@@ -74,7 +74,7 @@ struct Node* insertFirst(struct List* list, int value)
     return newNode;
 }
 
-struct Node* insertLast(struct List* list, int value)
+struct Node* insertBack(struct List* list, int value)
 {
     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node) * 1);
     if (newNode == NULL)
@@ -142,20 +142,20 @@ struct Node* changeElement(struct List* list, int index, int newVal)
     return node;
 };
 
-void deleteElement(struct List* list, int index)
+void eraseElement(struct List* list, int index)
 {
     if (index < 0 || index >= list->size)
         return;
 
     if (index == 0)
     {
-        deleteFirst(list);
+        eraseFront(list);
         return;
     }
 
     if (index == list->size-1)
     {
-        deleteLast(list);
+        eraseBack(list);
         return;
     }
 
@@ -170,7 +170,7 @@ void deleteElement(struct List* list, int index)
     free(node);
 }
 
-void deleteFirst(struct List* list)
+void eraseFront(struct List* list)
 {
     if (list->size == 0)
         return;
@@ -194,11 +194,11 @@ void deleteFirst(struct List* list)
     free(node);
 }
 
-void deleteLast(struct List* list)
+void eraseBack(struct List* list)
 {
     if (list->size == 0 || list->size == 1)
     {
-        deleteFirst(list);
+        eraseFront(list);
         return;
     }
 
@@ -262,8 +262,10 @@ struct Iterator* createFrontIterator(struct List* list)
 
     it->node = list->pFirst;
     it->numOfNode = 0;
+    it->list = list;
     return it;
 };
+
 struct Iterator* createBackIterator(struct List* list)
 {
     if (list == NULL)
@@ -278,13 +280,14 @@ struct Iterator* createBackIterator(struct List* list)
 
     it->node = list->pLast;
     it->numOfNode = list->size-1;
+    it->list = list;
     return it;
 };
 
 struct Iterator* relocateIterator(struct Iterator* it, int relocateOn)
 {
     if (it == NULL)
-        return 0;
+        return NULL;
 
     if (relocateOn == 0)
         return it;
@@ -292,47 +295,62 @@ struct Iterator* relocateIterator(struct Iterator* it, int relocateOn)
     if (relocateOn > 0)
     {
         for (int i = 0; i < relocateOn; i++)
-            if (it->node == NULL)
-                return NULL;
+        {
+            if (it->node->pNext == NULL)
+            {
+                it->node = it->list->pFirst;
+                it->numOfNode = 0;
+            }
             else
             {
                 it->node = it->node->pNext;
                 it->numOfNode++;
             }
-
+        }
     }
     else
     {
         for (int i = relocateOn; i < 0; i++)
-            if (it->node == NULL)
-                return NULL;
+        {
+            if (it->node->pPrev == NULL)
+            {
+                it->node = it->list->pLast;
+                it->numOfNode = it->list->size-1;
+            }
             else
             {
                 it->node = it->node->pPrev;
                 it->numOfNode--;
             }
+        }
     }
     return it;
 };
 
-void erase(struct List* list, struct Iterator* it)
+struct Iterator* erase(struct Iterator* it)
 {
+    if(it->list->pFirst == NULL)
+        return NULL;
+
     if (it->node->pNext == NULL)
     {
-        deleteLast(list);
-        return;
+        eraseBack(it->list);
+        it->node = it->list->pLast;
+        it->numOfNode = it->list->size-1;
+        return it;
     }
     if (it->node->pPrev == NULL)
     {
-        deleteFirst(list);
-        return;
+        eraseFront(it->list);
+        it->node = it->list->pFirst;
+        return it;
     }
 
     it->node->pPrev->pNext = it->node->pNext;
     it->node->pNext->pPrev = it->node->pPrev;
-    list->size--;
+    it->list->size--;
     free(it->node);
-    free(it);
+    it->node = it->node->pPrev;
 }
 
 void changeElementIterator(struct Iterator* it, int newNal)
@@ -340,21 +358,21 @@ void changeElementIterator(struct Iterator* it, int newNal)
     it->node->value = newNal;
 }
 
-struct Iterator* insertAfterIterator(struct List* list, struct Iterator* it, int value)
+struct Iterator* insertAfterIterator(struct Iterator* it, int value)
 {
     if (it->node->pNext == NULL)
     {
-        insertLast(list, value);
-        it->node = list->pLast;
-        it->numOfNode = list->size-1;
-        return;
+        insertBack(it->list, value);
+        it->node = it->list->pLast;
+        it->numOfNode = it->list->size-1;
+        return it;
     }
     if (it->node->pPrev == NULL)
     {
-        insertFirst(list, value);
-        it->node = list->pFirst;
+        insertFront(it->list, value);
+        it->node = it->list->pFirst;
         it->numOfNode = 0;
-        return;
+        return it;
     }
 
     struct Node* n = (struct Node*)malloc(sizeof(struct Node));
@@ -362,11 +380,11 @@ struct Iterator* insertAfterIterator(struct List* list, struct Iterator* it, int
 
     n->pPrev = it->node;
     n->pNext = it->node->pNext;
-    it->node->pNext = n;
     it->node->pNext->pPrev = n;
+    it->node->pNext = n;
     it->node = n;
     it->numOfNode++;
-    list->size++;
+    it->list->size++;
     return it;
 };
 
