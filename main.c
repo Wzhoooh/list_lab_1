@@ -13,57 +13,18 @@
 #define RIGHT 77// 224 77
 
 
-void testFuncton()
+void _main()
 {
-    struct List* l = createList();
-    insertBack(l, 33);
-    insertBack(l, 5);
-    insertBack(l, 7);
-    insertFront(l, 10);
-    printf("size: %d\n", l->size);
-    print(l);
-printf("----i1--\n");
-    struct Iterator* i = createBackIterator(l);
-    printf("value: %d\n", i->node->value);
-    printf("nu: %d\n---\n", i->numOfNode);
-    relocateIterator(i, -2);
-    printf("value: %d\n", i->node->value);
-    printf("nu: %d\n------\n", i->numOfNode);
-    //erase(i);
-    print(l);
-printf("----i2--\n");
-    struct Iterator* i2 = createFrontIterator(l);
-    relocateIterator(i2, 1);
-    insertAfterIterator(i2, 100);
-    insertAfterIterator(i2, 101);
-    insertAfterIterator(i2, 103);
-    insertAfterIndex(l, 4, 666);
-    print(l);
-printf("----i3--\n");
-    struct Iterator* i3 = createBackIterator(l);
-    insertAfterIterator(i3, 10);
-    insertAfterIterator(i3, 11);
-    insertAfterIterator(i3, 2);
-    insertAfterIterator(i3, 2);
-    print(l);
-printf("----i4--\n");
-    struct Iterator* i4 = createFrontIterator(l);
-//        printf("num: %d     ", i4->numOfNode);
-//        printf("value: %d\n", i4->node->value);
-    relocateIterator(i4, -5);
-    erase(i4);
-    print(l);
-    relocateIterator(i4, -6);
-    erase(i4); print(l);
-    erase(i4); print(l);
-    erase(i4); print(l);
-printf("----i5--\n");
-    struct Iterator* i5 = createBackIterator(l);
-    relocateIterator(i5, -2);
-    rebuildList(i5);
-    print(l);
-    printf("num: %d     ", i5->numOfNode);
-    printf("value: %d\n", i5->node->value);
+    struct List* list = createList();
+    insertFront(list, 55);
+    insertFront(list, 1);
+    insertFront(list, 4);
+    struct Iterator* iterator = createFrontIterator(list);
+    relocateIterator(iterator, 1);
+    relocateIterator(iterator, 1);
+    print(list);
+    printf("num: %d     ", iterator->numOfNode);
+    printf("value: %d\n", iterator->node->value);
 }
 
 int strToNum(const char* str)
@@ -193,6 +154,10 @@ int main()
 
     initialiseList(list);
     struct Iterator* iterator = createFrontIterator(list);
+//printf("num: %d", iterator->numOfNode);
+//printf("  val: %d", iterator->node->value);
+//printf("size: %d\n", iterator->list->size);
+//Sleep(1000);
 
     unsigned char biteFirst  = -1;
     unsigned char biteSecond = -1;
@@ -202,11 +167,19 @@ int main()
 //         action == f -> insert first element
 //         action == i -> insert element after index
 //         action == d -> delete element
+//         action == c -> change element
 //         action == r -> rebuild
 
         system("cls");
+printf("num: %d", iterator->numOfNode);
+printf("size: %d\n", iterator->list->size);
         printf("list: \n");
         print(list);
+        for (int i = 0; i < iterator->numOfNode; i++)
+            printf("      ");
+
+        printf("  ");
+        printf("*");
 
         biteFirst = getch();
         if (biteFirst == 224 || biteFirst == 0)
@@ -215,33 +188,52 @@ int main()
 
         if (biteFirst == 'f') // insert first element
         {
-
+            int insertNumber = getNumberWithGetch("Enter value of first member: ");
+            if (iterator->list->size == 0)
+            {
+                iterator->node = insertFront(list, insertNumber);
+                iterator->numOfNode = 0;
+            }
+            else
+                insertFront(list, insertNumber);
         }
         if (biteFirst == 'i') // insert element after index
         {
-
+            if (iterator->numOfNode != -1)
+            {
+                int insertNumber = getNumberWithGetch("Enter value of member: ");
+                insertAfterIterator(iterator, insertNumber);
+            }
         }
         if (biteFirst == 'd') // delete element
         {
-
+            erase(iterator);
+        }
+        if (biteFirst == 'c') // change element
+        {
+            int insertNumber = getNumberWithGetch("Enter value of member: ");
+            changeElementIterator(iterator, insertNumber);
         }
         if (biteFirst == 'r') // rebuild
         {
-
+            if (iterator->list->size != 0)
+                rebuildList(iterator);
         }
-        if (biteFirst == LEFT)
+        if (biteSecond == LEFT)
         {
-
+            relocateIterator(iterator, -1);
         }
-        if (biteFirst == RIGHT)
+        if (biteSecond == RIGHT)
         {
-
+            relocateIterator(iterator, 1);
         }
         if (biteFirst == ESC)
         {
-
+            return 0;
         }
-
-
     }
 }
+/// хаотичные передвижения курсора при различных операциях - вставка, удаление и тд
+/// при полном удалении программа иногда падает
+/// при rebuild так же происходит неправильное смещение итератора
+/// при нулевом размере программа падает

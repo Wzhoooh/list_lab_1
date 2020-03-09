@@ -241,7 +241,7 @@ void print(struct List* list)
     struct Node* node = list->pFirst;
     for (int i = 0; i < list->size; i++)
     {
-        printf("%d", node->value);
+        printf("%5d", node->value);
         printf(" ");
         node = node->pNext;
     }
@@ -367,13 +367,7 @@ struct Iterator* insertAfterIterator(struct Iterator* it, int value)
         it->numOfNode = it->list->size-1;
         return it;
     }
-    if (it->node->pPrev == NULL)
-    {
-        insertFront(it->list, value);
-        it->node = it->list->pFirst;
-        it->numOfNode = 0;
-        return it;
-    }
+
 
     struct Node* n = (struct Node*)malloc(sizeof(struct Node));
     n->value = value;
@@ -387,7 +381,6 @@ struct Iterator* insertAfterIterator(struct Iterator* it, int value)
     it->list->size++;
     return it;
 };
-
 
 void rebuildList(struct Iterator* it)
 {
