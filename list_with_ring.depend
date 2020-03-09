@@ -7,9 +7,10 @@
 1583763840 c:\users\alex\desktop\vuz\prog\2й семестр\list_with_ring\list.h
 	<stdlib.h>
 
-1583763840 source:c:\users\alex\desktop\vuz\prog\2й семестр\list_with_ring\main.c
+1583775348 source:c:\users\alex\desktop\vuz\prog\2й семестр\list_with_ring\main.c
 	<stdio.h>
 	<stdlib.h>
+	<conio.h>
+	<string.h>
 	"list.h"
-	"time.h"
 
