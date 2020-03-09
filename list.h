@@ -52,4 +52,6 @@ struct Iterator* erase(struct Iterator* it);
 void changeElementIterator(struct Iterator* it, int newNal);
 struct Iterator* insertAfterIterator(struct Iterator* it, int value);
 
+void rebuildList(struct Iterator* it);
+
 #endif // LIST_H_INCLUDED

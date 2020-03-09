@@ -49,9 +49,9 @@ printf("----i4--\n");
     erase(i4); print(l);
 printf("----i5--\n");
     struct Iterator* i5 = createBackIterator(l);
-    erase(i5); print(l);
-    erase(i5); print(l);
-    erase(i5); print(l);
+    relocateIterator(i5, -2);
+    rebuildList(i5);
+    print(l);
 
 
 }

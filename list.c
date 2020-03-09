@@ -389,3 +389,15 @@ struct Iterator* insertAfterIterator(struct Iterator* it, int value)
 };
 
 
+void rebuildList(struct Iterator* it)
+{
+    it->list->pLast->pNext = it->list->pFirst;
+    it->list->pFirst->pPrev = it->list->pLast;
+
+    it->list->pFirst = it->node;
+    it->list->pLast = it->node->pPrev;
+
+    it->node->pPrev->pNext = NULL;
+    it->node->pPrev = NULL;
+    it->numOfNode = 0;
+}
