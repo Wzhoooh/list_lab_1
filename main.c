@@ -114,7 +114,12 @@ int getNumberWithGetch(const char* message)
         }
         if (biteFirst == ENTER)
         {
-            if (nStr[0] != 0)
+            int flag = 1;
+            for (int i = 0; nStr[i]; i++)
+                if (nStr[i] != '0')
+                    flag = 0;
+
+            if (flag == 0)
                 break;
         }
     }
@@ -154,10 +159,6 @@ int main()
 
     initialiseList(list);
     struct Iterator* iterator = createFrontIterator(list);
-//printf("num: %d", iterator->numOfNode);
-//printf("  val: %d", iterator->node->value);
-//printf("size: %d\n", iterator->list->size);
-//Sleep(1000);
 
     unsigned char biteFirst  = -1;
     unsigned char biteSecond = -1;
@@ -171,15 +172,16 @@ int main()
 //         action == r -> rebuild
 
         system("cls");
-printf("num: %d", iterator->numOfNode);
-printf("size: %d\n", iterator->list->size);
         printf("list: \n");
         print(list);
         for (int i = 0; i < iterator->numOfNode; i++)
-            printf("      ");
+            printf("     |");
 
         printf("  ");
-        printf("*");
+        printf("*  |");
+
+        for (int i = 0; i < iterator->list->size - iterator->numOfNode - 1; i++)
+            printf("     |");
 
         biteFirst = getch();
         if (biteFirst == 224 || biteFirst == 0)
@@ -188,14 +190,17 @@ printf("size: %d\n", iterator->list->size);
 
         if (biteFirst == 'f') // insert first element
         {
-            int insertNumber = getNumberWithGetch("Enter value of first member: ");
+            int insertNumber = getNumberWithGetch("Enter value of new first member: ");
             if (iterator->list->size == 0)
             {
-                iterator->node = insertFront(list, insertNumber);
+                iterator->node = insertFront(iterator->list, insertNumber);
                 iterator->numOfNode = 0;
             }
             else
+            {
                 insertFront(list, insertNumber);
+                iterator->numOfNode++;
+            }
         }
         if (biteFirst == 'i') // insert element after index
         {
@@ -219,11 +224,11 @@ printf("size: %d\n", iterator->list->size);
             if (iterator->list->size != 0)
                 rebuildList(iterator);
         }
-        if (biteSecond == LEFT)
+        if (biteFirst == 224 && biteSecond == LEFT)
         {
             relocateIterator(iterator, -1);
         }
-        if (biteSecond == RIGHT)
+        if (biteFirst == 224 && biteSecond == RIGHT)
         {
             relocateIterator(iterator, 1);
         }
@@ -233,7 +238,3 @@ printf("size: %d\n", iterator->list->size);
         }
     }
 }
-/// хаотичные передвижения курсора при различных операциях - вставка, удаление и тд
-/// при полном удалении программа иногда падает
-/// при rebuild так же происходит неправильное смещение итератора
-/// при нулевом размере программа падает

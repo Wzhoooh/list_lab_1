@@ -241,8 +241,7 @@ void print(struct List* list)
     struct Node* node = list->pFirst;
     for (int i = 0; i < list->size; i++)
     {
-        printf("%5d", node->value);
-        printf(" ");
+        printf("%5d|", node->value);
         node = node->pNext;
     }
     printf("\n");
@@ -348,9 +347,11 @@ struct Iterator* erase(struct Iterator* it)
 
     it->node->pPrev->pNext = it->node->pNext;
     it->node->pNext->pPrev = it->node->pPrev;
-    it->list->size--;
-    free(it->node);
+    struct Node* deleteNode = it->node;
     it->node = it->node->pPrev;
+    it->numOfNode--;
+    free(deleteNode);
+    it->list->size--;
 }
 
 void changeElementIterator(struct Iterator* it, int newNal)
