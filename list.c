@@ -260,7 +260,6 @@ struct Iterator* createFrontIterator(struct List* list)
         return NULL;
 
     it->node = list->pFirst;
-    it->numOfNode = 0;
     it->list = list;
     return it;
 };
@@ -278,7 +277,6 @@ struct Iterator* createBackIterator(struct List* list)
         return NULL;
 
     it->node = list->pLast;
-    it->numOfNode = list->size-1;
     it->list = list;
     return it;
 };
@@ -298,12 +296,10 @@ struct Iterator* relocateIterator(struct Iterator* it, int relocateOn)
             if (it->node->pNext == NULL)
             {
                 it->node = it->list->pFirst;
-                it->numOfNode = 0;
             }
             else
             {
                 it->node = it->node->pNext;
-                it->numOfNode++;
             }
         }
     }
@@ -314,12 +310,10 @@ struct Iterator* relocateIterator(struct Iterator* it, int relocateOn)
             if (it->node->pPrev == NULL)
             {
                 it->node = it->list->pLast;
-                it->numOfNode = it->list->size-1;
             }
             else
             {
                 it->node = it->node->pPrev;
-                it->numOfNode--;
             }
         }
     }
@@ -335,7 +329,6 @@ struct Iterator* erase(struct Iterator* it)
     {
         eraseBack(it->list);
         it->node = it->list->pLast;
-        it->numOfNode = it->list->size-1;
         return it;
     }
     if (it->node->pPrev == NULL)
@@ -349,7 +342,6 @@ struct Iterator* erase(struct Iterator* it)
     it->node->pNext->pPrev = it->node->pPrev;
     struct Node* deleteNode = it->node;
     it->node = it->node->pPrev;
-    it->numOfNode--;
     free(deleteNode);
     it->list->size--;
 }
@@ -365,7 +357,6 @@ struct Iterator* insertAfterIterator(struct Iterator* it, int value)
     {
         insertBack(it->list, value);
         it->node = it->list->pLast;
-        it->numOfNode = it->list->size-1;
         return it;
     }
 
@@ -378,7 +369,6 @@ struct Iterator* insertAfterIterator(struct Iterator* it, int value)
     it->node->pNext->pPrev = n;
     it->node->pNext = n;
     it->node = n;
-    it->numOfNode++;
     it->list->size++;
     return it;
 };
@@ -393,5 +383,13 @@ void rebuildList(struct Iterator* it)
 
     it->node->pPrev->pNext = NULL;
     it->node->pPrev = NULL;
-    it->numOfNode = 0;
+}
+
+int getNumOfNode(struct Iterator* it)
+{
+    int index = 0;
+    for (struct Node* n = it->list->pFirst; n != it->node; n = n->pNext)
+        index++;
+
+    return index;
 }

@@ -14,3 +14,18 @@
 	<string.h>
 	"list.h"
 
+1586245191 source:c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\list.c
+	"list.h"
+	<stdlib.h>
+	<stdio.h>
+
+1586248871 c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\list.h
+	<stdlib.h>
+
+1586248871 source:c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\main.c
+	<stdio.h>
+	<stdlib.h>
+	<conio.h>
+	<string.h>
+	"list.h"
+

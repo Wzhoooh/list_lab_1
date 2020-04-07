@@ -23,7 +23,6 @@ struct Node
 
 struct Iterator
 {
-    int numOfNode;
     struct Node* node;
     struct List* list;
 };
@@ -53,5 +52,7 @@ void changeElementIterator(struct Iterator* it, int newNal);
 struct Iterator* insertAfterIterator(struct Iterator* it, int value);
 
 void rebuildList(struct Iterator* it);
+
+int getNumOfNode(struct Iterator* it);
 
 #endif // LIST_H_INCLUDED

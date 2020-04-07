@@ -12,21 +12,6 @@
 #define LEFT 75 // 224 75
 #define RIGHT 77// 224 77
 
-
-void _main()
-{
-    struct List* list = createList();
-    insertFront(list, 55);
-    insertFront(list, 1);
-    insertFront(list, 4);
-    struct Iterator* iterator = createFrontIterator(list);
-    relocateIterator(iterator, 1);
-    relocateIterator(iterator, 1);
-    print(list);
-    printf("num: %d     ", iterator->numOfNode);
-    printf("value: %d\n", iterator->node->value);
-}
-
 int strToNum(const char* str)
 {
     int result = 0;
@@ -114,6 +99,42 @@ int getNumberWithGetch(const char* message)
         }
         if (biteFirst == ENTER)
         {
+            if (nStr[0] != 0)
+                break;
+        }
+    }
+    return strToNum(nStr);
+}
+
+int getFirstSizeWithGetch(const char* message)
+{
+    unsigned char biteFirst  = -1;
+    unsigned char biteSecond = -1;
+    char nStr[100] = { 0 };
+    int it = -1;
+    for (;;)
+    {
+        system("cls");
+        printf(message);
+        printf(nStr);
+
+        biteFirst = getch();
+        if (biteFirst == 224 || biteFirst == 0)
+            biteSecond = getch();
+
+        if(biteFirst >= '0' && biteFirst <= '9')
+        {
+            it++;
+            nStr[it] = biteFirst;
+        }
+        if (biteFirst == BACK_SPACE)
+        {
+            nStr[it] = 0;
+            if (it != -1)
+                it--;
+        }
+        if (biteFirst == ENTER)
+        {
             int flag = 1;
             for (int i = 0; nStr[i]; i++)
                 if (nStr[i] != '0')
@@ -128,7 +149,7 @@ int getNumberWithGetch(const char* message)
 
 void initialiseList(struct List* list)
 {
-    int numberOfMembers = getNumberWithGetch("Enter number of members:  ");
+    int numberOfMembers = getFirstSizeWithGetch("Enter number of members:  ");
     if (numberOfMembers < 0)
         numberOfMembers *= -1;
 
@@ -174,13 +195,13 @@ int main()
         system("cls");
         printf("list: \n");
         print(list);
-        for (int i = 0; i < iterator->numOfNode; i++)
+        for (int i = 0; i < getNumOfNode(iterator); i++)
             printf("     |");
 
         printf("  ");
         printf("*  |");
 
-        for (int i = 0; i < iterator->list->size - iterator->numOfNode - 1; i++)
+        for (int i = 0; i < iterator->list->size - getNumOfNode(iterator) - 1; i++)
             printf("     |");
 
         biteFirst = getch();
@@ -194,17 +215,15 @@ int main()
             if (iterator->list->size == 0)
             {
                 iterator->node = insertFront(iterator->list, insertNumber);
-                iterator->numOfNode = 0;
             }
             else
             {
                 insertFront(list, insertNumber);
-                iterator->numOfNode++;
             }
         }
         if (biteFirst == 'i') // insert element after index
         {
-            if (iterator->numOfNode != -1)
+            if (getNumOfNode(iterator) != -1)
             {
                 int insertNumber = getNumberWithGetch("Enter value of member: ");
                 insertAfterIterator(iterator, insertNumber);
