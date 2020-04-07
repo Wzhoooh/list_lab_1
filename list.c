@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+int strToNum(const char* str);
+
 struct List* createList()
 {
     /// сдедать проверку на null
@@ -360,7 +362,6 @@ struct Iterator* insertAfterIterator(struct Iterator* it, int value)
         return it;
     }
 
-
     struct Node* n = (struct Node*)malloc(sizeof(struct Node));
     n->value = value;
 
@@ -392,4 +393,32 @@ int getNumOfNode(struct Iterator* it)
         index++;
 
     return index;
+}
+
+struct Iterator* insertChainAfterIterator(struct Iterator* it, char* elements)
+{
+    int startOfNumIndex = 0;
+    for (int i = 0; elements[i] != '\0'; i++)
+    {
+        if (elements[i] == ' ')
+        {
+            elements[i] = '\0';
+            int newNumber = strToNum(elements + startOfNumIndex);
+            startOfNumIndex = i + 1;
+
+            if (it->list->size == 0)
+                insertFront(it->list, newNumber);
+            else
+                insertAfterIterator(it, newNumber);
+        }
+    }
+
+    int newNumber = strToNum(elements + startOfNumIndex);
+    if (it->list->size == 0)
+        insertFront(it->list, newNumber);
+    else
+        insertAfterIterator(it, newNumber);
+
+    free(elements);
+    return it;
 }

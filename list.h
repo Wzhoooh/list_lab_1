@@ -55,4 +55,6 @@ void rebuildList(struct Iterator* it);
 
 int getNumOfNode(struct Iterator* it);
 
+struct Iterator* insertChainAfterIterator(struct Iterator* it, char* elements);
+
 #endif // LIST_H_INCLUDED

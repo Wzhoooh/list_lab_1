@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include <locale.h>
 #include "list.h"
 
 #define BACK_SPACE 8
@@ -11,6 +12,8 @@
 #define DOWN 80 // 224 80
 #define LEFT 75 // 224 75
 #define RIGHT 77// 224 77
+
+const int SIZE_OF_MENU = 9;
 
 int strToNum(const char* str)
 {
@@ -70,46 +73,10 @@ int getItEnd(const char* str)
     return it;
 }
 
-int getNumberWithGetch(const char* message)
-{
-    unsigned char biteFirst  = -1;
-    unsigned char biteSecond = -1;
-    char nStr[100] = { 0 };
-    int it = -1;
-    for (;;)
-    {
-        system("cls");
-        printf(message);
-        printf(nStr);
-
-        biteFirst = getch();
-        if (biteFirst == 224 || biteFirst == 0)
-            biteSecond = getch();
-
-        if(biteFirst >= '0' && biteFirst <= '9' || it == -1 && biteFirst == '-')
-        {
-            it++;
-            nStr[it] = biteFirst;
-        }
-        if (biteFirst == BACK_SPACE)
-        {
-            nStr[it] = 0;
-            if (it != -1)
-                it--;
-        }
-        if (biteFirst == ENTER)
-        {
-            if (nStr[0] != 0)
-                break;
-        }
-    }
-    return strToNum(nStr);
-}
-
 int getFirstSizeWithGetch(const char* message)
 {
-    unsigned char biteFirst  = -1;
-    unsigned char biteSecond = -1;
+    unsigned char byteFirst  = -1;
+    unsigned char byteSecond = -1;
     char nStr[100] = { 0 };
     int it = -1;
     for (;;)
@@ -118,22 +85,22 @@ int getFirstSizeWithGetch(const char* message)
         printf(message);
         printf(nStr);
 
-        biteFirst = getch();
-        if (biteFirst == 224 || biteFirst == 0)
-            biteSecond = getch();
+        byteFirst = getch();
+        if (byteFirst == 224 || byteFirst == 0)
+            byteSecond = getch();
 
-        if(biteFirst >= '0' && biteFirst <= '9')
+        if(byteFirst >= '0' && byteFirst <= '9')
         {
             it++;
-            nStr[it] = biteFirst;
+            nStr[it] = byteFirst;
         }
-        if (biteFirst == BACK_SPACE)
+        if (byteFirst == BACK_SPACE)
         {
             nStr[it] = 0;
             if (it != -1)
                 it--;
         }
-        if (biteFirst == ENTER)
+        if (byteFirst == ENTER)
         {
             int flag = 1;
             for (int i = 0; nStr[i]; i++)
@@ -146,6 +113,86 @@ int getFirstSizeWithGetch(const char* message)
     }
     return strToNum(nStr);
 }
+
+int getNumberWithGetch(const char* message)
+{
+    unsigned char byteFirst  = -1;
+    unsigned char byteSecond = -1;
+    char nStr[100] = { 0 };
+    int it = -1;
+    for (;;)
+    {
+        system("cls");
+        printf(message);
+        printf(nStr);
+
+        byteFirst = getch();
+        if (byteFirst == 224 || byteFirst == 0)
+            byteSecond = getch();
+
+        if(byteFirst >= '0' && byteFirst <= '9' || it == -1 && byteFirst == '-')
+        {
+            it++;
+            nStr[it] = byteFirst;
+        }
+        if (byteFirst == BACK_SPACE)
+        {
+            nStr[it] = 0;
+            if (it != -1)
+                it--;
+        }
+        if (byteFirst == ENTER)
+        {
+            if (nStr[0] != 0)
+                break;
+        }
+    }
+    return strToNum(nStr);
+}
+
+char* getChainStrWithGetch(const char* message)
+{
+    unsigned char byteFirst  = -1;
+    unsigned char byteSecond = -1;
+
+    char* nStr = (char*)malloc(sizeof(char) * 500);
+    for (int i = 0; i < 500; i++)
+        nStr[i] = 0;
+
+    int it = -1;
+
+    for (;;)
+    {
+        system("cls");
+        printf(message);
+        printf(nStr);
+
+        byteFirst = getch();
+        if (byteFirst == 224 || byteFirst == 0)
+            byteSecond = getch();
+
+        if(byteFirst >= '0' && byteFirst <= '9' ||
+           (it == -1 || nStr[it] == ' ') && byteFirst == '-' ||
+           (it != -1 && nStr[it] != ' ') && byteFirst == ' ')
+        {
+            it++;
+            nStr[it] = byteFirst;
+        }
+        if (byteFirst == BACK_SPACE)
+        {
+            nStr[it] = 0;
+            if (it != -1)
+                it--;
+        }
+        if (byteFirst == ENTER)
+        {
+            if (nStr[0] != 0)
+                break;
+        }
+    }
+    return nStr;
+}
+
 
 void initialiseList(struct List* list)
 {
@@ -171,7 +218,7 @@ void initialiseList(struct List* list)
 
 void printMenu(int state)
 {
-    printf("1) Добавить элемент на указанное место");   if(state == 1) printf(" <-"); printf("\n");
+    printf("1) Добавить элемент после указанного");     if(state == 1) printf(" <-"); printf("\n");
     printf("2) Добавить первый элемент");               if(state == 2) printf(" <-"); printf("\n");
     printf("3) Изменить элемент");                      if(state == 3) printf(" <-"); printf("\n");
     printf("4) Удалить элемент");                       if(state == 4) printf(" <-"); printf("\n");
@@ -182,8 +229,28 @@ void printMenu(int state)
     printf("9) Перестроить список");                    if(state == 9) printf(" <-"); printf("\n");
 }
 
+void changeState(int* state, char byteFirst, char byteSecond)
+{
+    if (byteSecond == DOWN)
+        if (*state == SIZE_OF_MENU)
+            *state = 1;
+        else
+            (*state)++;
+
+    if (byteSecond == UP)
+    if (*state == 1)
+        *state = SIZE_OF_MENU;
+    else
+        (*state)--;
+
+    if (byteFirst >= '1' && byteFirst <= '9')
+        (*state) = byteFirst - '0';
+}
+
 int main()
 {
+    setlocale(LC_ALL, "Russian");
+
     struct List* list = createList();
     if (list == NULL)
     {
@@ -194,10 +261,11 @@ int main()
     initialiseList(list);
     struct Iterator* iterator = createFrontIterator(list);
 
-    unsigned char biteFirst  = -1;
-    unsigned char biteSecond = -1;
+    unsigned char byteFirst  = -1;
+    unsigned char byteSecond = -1;
 
     int state = 1;
+    int enterPressed = 0;
 
     for (;;)
     {
@@ -210,61 +278,85 @@ int main()
         printf("  ");
         printf("*  |");
 
-        printMenu( )
-
         for (int i = 0; i < iterator->list->size - getNumOfNode(iterator) - 1; i++)
             printf("     |");
 
-        biteFirst = getch();
-        if (biteFirst == 224 || biteFirst == 0)
-            biteSecond = getch();
+        printf("\n");
 
+        printMenu(state);
 
-        if (biteFirst == 'f') // insert first element
-        {
-            int insertNumber = getNumberWithGetch("Enter value of new first member: ");
-            if (iterator->list->size == 0)
-            {
-                iterator->node = insertFront(iterator->list, insertNumber);
-            }
-            else
-            {
-                insertFront(list, insertNumber);
-            }
-        }
-        if (biteFirst == 'i') // insert element after index
-        {
-            if (getNumOfNode(iterator) != -1)
-            {
-                int insertNumber = getNumberWithGetch("Enter value of member: ");
-                insertAfterIterator(iterator, insertNumber);
-            }
-        }
-        if (biteFirst == 'd') // delete element
-        {
-            erase(iterator);
-        }
-        if (biteFirst == 'c') // change element
-        {
-            int insertNumber = getNumberWithGetch("Enter value of member: ");
-            changeElementIterator(iterator, insertNumber);
-        }
-        if (biteFirst == 'r') // rebuild
-        {
-            if (iterator->list->size != 0)
-                rebuildList(iterator);
-        }
-        if (biteFirst == 224 && biteSecond == LEFT)
+        byteFirst = getch();
+        if (byteFirst == 224 || byteFirst == 0)
+            byteSecond = getch();
+        else
+            byteSecond = 0;
+
+        changeState(&state, byteFirst, byteSecond);
+        if (byteFirst == 224 && byteSecond == LEFT)
         {
             relocateIterator(iterator, -1);
         }
-        if (biteFirst == 224 && biteSecond == RIGHT)
+        if (byteFirst == 224 && byteSecond == RIGHT)
         {
             relocateIterator(iterator, 1);
         }
-        if (biteFirst == ESC)
+        if (byteFirst == ESC)
         {
             return 0;
         }
+        if (byteFirst == ENTER)
+        {
+            enterPressed = 1;
+        }
+
+        if (enterPressed == 1)
+        {
+            if (state == 1) // insert element after index
+            {
+                if (list->size != 0)
+                {
+                    int insertNumber = getNumberWithGetch("Enter value of member: ");
+                    insertAfterIterator(iterator, insertNumber);
+                }
+            }
+
+            if (state == 2) // insert first element
+            {
+                int insertNumber = getNumberWithGetch("Enter value of new first member: ");
+                if (iterator->list->size == 0)
+                {
+                    iterator->node = insertFront(iterator->list, insertNumber);
+                }
+                else
+                {
+                    insertFront(list, insertNumber);
+                }
+            }
+
+            if (state == 3) // change element
+            {
+                int insertNumber = getNumberWithGetch("Enter value of member: ");
+                changeElementIterator(iterator, insertNumber);
+            }
+
+            if (state == 4) // delete element
+            {
+                erase(iterator);
+            }
+            if (state == 5) // add a chain of elements
+            {
+                insertChainAfterIterator(iterator, getChainStrWithGetch("Enter value of chain members: "));
+            }
+
+            if (state == 9) // rebuild
+            {
+                if (iterator->list->size != 0)
+                    rebuildList(iterator);
+            }
+
+
+        enterPressed = 0;
+        }
+
     }
 }
