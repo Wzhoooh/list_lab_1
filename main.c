@@ -169,6 +169,19 @@ void initialiseList(struct List* list)
     system("cls");
 }
 
+void printMenu(int state)
+{
+    printf("1) Добавить элемент на указанное место");   if(state == 1) printf(" <-"); printf("\n");
+    printf("2) Добавить первый элемент");               if(state == 2) printf(" <-"); printf("\n");
+    printf("3) Изменить элемент");                      if(state == 3) printf(" <-"); printf("\n");
+    printf("4) Удалить элемент");                       if(state == 4) printf(" <-"); printf("\n");
+    printf("5) Добавить цепочку элементов");            if(state == 5) printf(" <-"); printf("\n");
+    printf("6) Удалить цепочку элементов");             if(state == 6) printf(" <-"); printf("\n");
+    printf("7) Записать цепочку в файл");               if(state == 7) printf(" <-"); printf("\n");
+    printf("8) Считать цепочку из файла");              if(state == 8) printf(" <-"); printf("\n");
+    printf("9) Перестроить список");                    if(state == 9) printf(" <-"); printf("\n");
+}
+
 int main()
 {
     struct List* list = createList();
@@ -184,14 +197,10 @@ int main()
     unsigned char biteFirst  = -1;
     unsigned char biteSecond = -1;
 
+    int state = 1;
+
     for (;;)
     {
-//         action == f -> insert first element
-//         action == i -> insert element after index
-//         action == d -> delete element
-//         action == c -> change element
-//         action == r -> rebuild
-
         system("cls");
         printf("list: \n");
         print(list);
@@ -200,6 +209,8 @@ int main()
 
         printf("  ");
         printf("*  |");
+
+        printMenu( )
 
         for (int i = 0; i < iterator->list->size - getNumOfNode(iterator) - 1; i++)
             printf("     |");
