@@ -400,11 +400,10 @@ struct Iterator* insertChainAfterIterator(struct Iterator* it, char* elements)
     int startOfNumIndex = 0;
 
     int j = 0;
-    for (;; j++)
-        if (elements[j] == '\0')
-            break;
+    for (; elements[j] != '\0'; j++)
+        ;
 
-    for (; elements[j] == ' '; j--)
+    for (; elements[j] == ' ' || elements[j] == '\0'; j--)
         elements[j] = '\0';
 
     j++;
