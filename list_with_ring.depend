@@ -14,19 +14,20 @@
 	<string.h>
 	"list.h"
 
-1586283898 source:c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\list.c
+1586363125 source:c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\list.c
 	"list.h"
 	<stdlib.h>
 	<stdio.h>
 
-1586279635 c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\list.h
+1586332188 c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\list.h
 	<stdlib.h>
 
-1586281830 source:c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\main.c
+1586365993 source:c:\users\galina\desktop\programming\c++\0-educational_projects\list_lab\main.c
 	<stdio.h>
 	<stdlib.h>
 	<conio.h>
 	<string.h>
 	<locale.h>
+	<windows.h>
 	"list.h"
 

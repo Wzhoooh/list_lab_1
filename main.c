@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <string.h>
 #include <locale.h>
+#include <windows.h>
 #include "list.h"
 
 #define BACK_SPACE 8
@@ -186,13 +187,49 @@ char* getChainStrWithGetch(const char* message)
         }
         if (byteFirst == ENTER)
         {
-            if (nStr[0] != 0)
+            if (nStr[0] != 0 && nStr[it] != ' ')
                 break;
         }
     }
     return nStr;
 }
 
+struct Iterator* eraseChainWithGetch(struct Iterator* iterator)
+{
+    int firstIndex;
+    int secondIndex;
+
+    for (;;) // get first index
+    {
+        system("cls");
+        firstIndex = getNumberWithGetch("Enter first index: ");
+        if (!(firstIndex < 0 || firstIndex >= iterator->list->size))
+            break;
+        else
+        {
+            printf("\n\nInvalid index");
+            Sleep(2000);
+            system("cls");
+        }
+    }
+
+    for (;;) // get second index
+    {
+        system("cls");
+        secondIndex = getNumberWithGetch("Enter second index: ");
+        if (!(secondIndex < 0 || secondIndex >= iterator->list->size || secondIndex < firstIndex))
+            break;
+        else
+        {
+            printf("\n\nInvalid index");
+            Sleep(2000);
+            system("cls");
+        }
+    }
+
+    iterator = eraseChain(iterator->list, firstIndex, secondIndex);
+    return iterator;
+}
 
 void initialiseList(struct List* list)
 {
@@ -245,6 +282,89 @@ void changeState(int* state, char byteFirst, char byteSecond)
 
     if (byteFirst >= '1' && byteFirst <= '9')
         (*state) = byteFirst - '0';
+}
+
+void writeChainToFile(struct List* list)
+{
+    int firstIndex;
+    int secondIndex;
+
+    for (;;) // get first index
+    {
+        system("cls");
+        firstIndex = getNumberWithGetch("Enter first index: ");
+        if (!(firstIndex < 0 || firstIndex >= list->size))
+            break;
+        else
+        {
+            printf("\n\nInvalid index");
+            Sleep(2000);
+            system("cls");
+        }
+    }
+
+    for (;;) // get second index
+    {
+        system("cls");
+        secondIndex = getNumberWithGetch("Enter second index: ");
+        if (!(secondIndex < 0 || secondIndex >= list->size || secondIndex < firstIndex))
+            break;
+        else
+        {
+            printf("\n\nInvalid index");
+            Sleep(2000);
+            system("cls");
+        }
+    }
+
+    struct FILE* f = NULL;
+    char nameOfFile[200] = { 0 };
+    for (;;)
+    {
+        system("cls");
+        printf("Enter name to file: ");
+        scanf("%s", nameOfFile);
+        f = fopen(nameOfFile, "wt");
+        if (!(f == NULL))
+            break;
+        else
+            for (int i = 0; i < 200; i++)
+            nameOfFile[i] = '\0';
+    }
+
+    struct Iterator* it = createFrontIterator(list);
+    relocateIterator(it,firstIndex);
+
+    for (int i = firstIndex; i <= secondIndex; i++)
+    {
+        fprintf(f, "%d ", it->node->value);
+        relocateIterator(it, 1);
+    }
+
+    fclose(f);
+}
+
+struct Iterator* readChainFromFile(struct Iterator* it)
+{
+    struct FILE* f = NULL;
+    char nameOfFile[200] = { 0 };
+    for (;;)
+    {
+        system("cls");
+        printf("Enter name to file: ");
+        scanf("%s", nameOfFile);
+        f = fopen(nameOfFile, "rt");
+        if (!(f == NULL))
+            break;
+        else
+            for (int i = 0; i < 200; i++)
+            nameOfFile[i] = '\0';
+    }
+
+    char elements[500] = { 0 };
+    fgets(elements, 498, f);
+    it = insertChainAfterIterator(it, elements);
+    return it;
 }
 
 int main()
@@ -347,7 +467,18 @@ int main()
             {
                 insertChainAfterIterator(iterator, getChainStrWithGetch("Enter value of chain members: "));
             }
-
+            if (state == 6) // erase a chain of elements
+            {
+                iterator = eraseChainWithGetch(iterator);
+            }
+            if (state == 7) // write to file
+            {
+                writeChainToFile(iterator->list);
+            }
+            if (state == 8) // add a chain of elements
+            {
+                iterator = readChainFromFile(iterator);
+            }
             if (state == 9) // rebuild
             {
                 if (iterator->list->size != 0)

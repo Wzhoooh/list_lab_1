@@ -398,6 +398,18 @@ int getNumOfNode(struct Iterator* it)
 struct Iterator* insertChainAfterIterator(struct Iterator* it, char* elements)
 {
     int startOfNumIndex = 0;
+
+    int j = 0;
+    for (;; j++)
+        if (elements[j] == '\0')
+            break;
+
+    for (; elements[j] == ' '; j--)
+        elements[j] = '\0';
+
+    j++;
+    elements[j] = ' ';
+
     for (int i = 0; elements[i] != '\0'; i++)
     {
         if (elements[i] == ' ')
@@ -407,18 +419,23 @@ struct Iterator* insertChainAfterIterator(struct Iterator* it, char* elements)
             startOfNumIndex = i + 1;
 
             if (it->list->size == 0)
-                insertFront(it->list, newNumber);
+                it->node = insertFront(it->list, newNumber);
             else
                 insertAfterIterator(it, newNumber);
         }
     }
 
-    int newNumber = strToNum(elements + startOfNumIndex);
-    if (it->list->size == 0)
-        insertFront(it->list, newNumber);
-    else
-        insertAfterIterator(it, newNumber);
-
-    free(elements);
     return it;
 }
+
+struct Iterator* eraseChain(struct List* list, int firstIndex, int lastIndex)
+{
+    struct Iterator* it = createFrontIterator(list);
+    relocateIterator(it, lastIndex);
+
+    for (int i = lastIndex; i >= firstIndex; i--)
+        if (NULL == erase(it))
+            break;
+
+    return it;
+};
